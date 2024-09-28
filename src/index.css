@@ -1,0 +1,28 @@
+.fixed-bottom {
+  width: 100%;
+  z-index: 1000;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow at the bottom */
+}
+
+.bottom-bar {
+  border-top: 1px solid #dee2e6; /* Light border line at the top */
+}
+
+.icon-link {
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.icon-link:hover {
+  background-color: #9dcf52; /* Dark background for hover effect */
+  color: #ffffff; /* White text for better contrast */
+  padding: 25px; /* Padding to create a circle effect */
+  width: 4rem;
+}
+
+.icon-link svg {
+  border-radius: 50%; /* Ensures the icon has a rounded background */
+}
+
+.small {
+  font-size: 12px; /* Smaller text for better fit */
+}
