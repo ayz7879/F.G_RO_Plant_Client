@@ -136,13 +136,13 @@ const CustomerCartPage = () => {
               prevItems.map((item) =>
                 item._id === selectedItem._id
                   ? {
-                      ...item,
-                      ...editForm,
-                      totalAmount,
-                      totalCustomerPaid,
-                      pendingJars,
-                      pendingPayment,
-                    }
+                    ...item,
+                    ...editForm,
+                    totalAmount,
+                    totalCustomerPaid,
+                    pendingJars,
+                    pendingPayment,
+                  }
                   : item
               )
             );
@@ -298,10 +298,15 @@ const CustomerCartPage = () => {
                 <strong>Address:</strong> {customerDetails.address}
               </p>
               <p>
-                <strong>Jar Deposit:</strong> {customerDetails.jarDeposit}
+                <strong>Deposit Jars :</strong> {customerDetails.jarDeposit}
               </p>
               <p>
-                <strong>Price Per Jar:</strong> ₹{customerDetails.pricePerJar}
+
+                <strong>Deposit Capsules :</strong> {customerDetails.capsuleDeposit}
+
+              </p>
+              <p>
+                <strong>Price Per Capsule or Jar : </strong> ₹{customerDetails.pricePerJar}
               </p>
 
               {cartItems.length > 0 && (
@@ -323,6 +328,28 @@ const CustomerCartPage = () => {
                       <strong>Pending Jars:</strong> {cartItems[0].pendingJars}
                     </div>
                   </div>
+
+                  <div className="col-6 col-md-4 mb-3">
+                    <div className="bg-secondary p-3 rounded">
+                      <strong>Total Capsules Given :</strong>{" "}
+                      {cartItems[0].totalCapsulesGiven}
+                    </div>
+                  </div>
+
+                  <div className="col-6 col-md-4 mb-3">
+                    <div className="bg-secondary p-3 rounded">
+                      <strong>Total Capsules Taken :</strong>{" "}
+                      {cartItems[0].totalCapsulesTaken}
+                    </div>
+                  </div>
+                  <div className="col-6 col-md-4 mb-3">
+
+                    <div className="bg-secondary p-3 rounded">
+                      <strong>Pending Capsules :</strong> {cartItems[0].pendingCapsules}
+                    </div>
+                  </div>
+
+
                   <div className="col-6 col-md-4 mb-3">
                     <div className="bg-secondary p-3 rounded">
                       <strong>Total Amount:</strong> ₹{cartItems[0].totalAmount}

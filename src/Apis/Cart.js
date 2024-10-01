@@ -1,17 +1,19 @@
 import axios from "axios";
 
 const BASE_URL = "https://f-g-ro-plant-api-1.onrender.com/api/cart";
+// const BASE_URL_LOCAL = "http://localhost:1000/api/cart";
 
 // Add to Cart
 export const addToCart = async (
   customerId,
+  capsulesGiven, capsulesTaken,
   jarsGiven,
   jarsTaken,
   customerPay
 ) => {
   try {
     const response = await axios.post(`${BASE_URL}/add`, {
-      customerId,
+      customerId, capsulesGiven, capsulesTaken,
       jarsGiven,
       jarsTaken,
       customerPay,

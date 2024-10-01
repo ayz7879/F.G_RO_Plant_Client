@@ -1,6 +1,7 @@
 import axios from "axios";
 
 const API_BASE_URL = "https://f-g-ro-plant-api-1.onrender.com/api/admin";
+// const API_BASE_URL_LOCAL = "http://localhost:1000//api/admin";
 
 // Admin Register API using axios
 export const adminRegister = async (name, username, password) => {

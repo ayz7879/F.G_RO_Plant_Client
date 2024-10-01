@@ -9,7 +9,9 @@ const AddToCart = () => {
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [formData, setFormData] = useState({
     jarsGiven: 0,
+    capsulesGiven: 0,
     jarsTaken: 0,
+    capsulesTaken: 0,
     customerPay: 0,
   });
   const [error, setError] = useState(""); // For validation error
@@ -76,7 +78,7 @@ const AddToCart = () => {
   // Submit form to add to cart
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const { customerId, jarsGiven, jarsTaken, customerPay } = formData;
+    const { customerId, jarsGiven, jarsTaken, customerPay, capsulesGiven, capsulesTaken } = formData;
 
     if (!customerId) {
       setError("Please select a customer.");
@@ -85,6 +87,8 @@ const AddToCart = () => {
 
     const response = await addToCart(
       customerId,
+      Number(capsulesGiven),
+      Number(capsulesTaken),
       Number(jarsGiven),
       Number(jarsTaken),
       Number(customerPay)
@@ -173,12 +177,32 @@ const AddToCart = () => {
             />
           </div>
           <div className="form-group">
+            <label>Capsules Given</label>
+            <input
+              type="number"
+              className="form-control"
+              name="capsulesGiven"
+              value={formData.capsulesGiven}
+              onChange={handleInputChange}
+            />
+          </div>
+          <div className="form-group">
             <label>Jars Taken</label>
             <input
               type="number"
               className="form-control"
               name="jarsTaken"
               value={formData.jarsTaken}
+              onChange={handleInputChange}
+            />
+          </div>
+          <div className="form-group">
+            <label>Capsules Taken</label>
+            <input
+              type="number"
+              className="form-control"
+              name="capsulesTaken"
+              value={formData.capsulesTaken}
               onChange={handleInputChange}
             />
           </div>

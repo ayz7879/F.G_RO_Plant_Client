@@ -1,6 +1,7 @@
 import axios from "axios";
 
 const API_BASE_URL = "https://f-g-ro-plant-api-1.onrender.com/api/customer";
+// const API_BASE_URL_LOCAL = "http://localhost:1000/api/customer";
 
 // Add a new customer
 export const addCustomer = async (
@@ -9,6 +10,7 @@ export const addCustomer = async (
   phone,
   advancePaid,
   jarDeposit,
+  capsuleDeposit,
   pricePerJar
 ) => {
   try {
@@ -18,6 +20,7 @@ export const addCustomer = async (
       phone,
       advancePaid,
       jarDeposit,
+      capsuleDeposit,
       pricePerJar,
     });
     return response.data;
@@ -44,15 +47,19 @@ export const updateCustomer = async (
   phone,
   advancePaid,
   jarDeposit,
+  capsuleDeposit,
   pricePerJar
 ) => {
   try {
+
+
     const response = await axios.put(`${API_BASE_URL}/update/${id}`, {
       name,
       address,
       phone,
       advancePaid,
       jarDeposit,
+      capsuleDeposit,
       pricePerJar,
     });
     return response.data;
