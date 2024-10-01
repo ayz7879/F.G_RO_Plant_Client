@@ -100,8 +100,10 @@ const History = () => {
               <th>Date</th>
               <th>Name</th>
               <th>Address</th>
-              <th>Given</th>
-              <th>Taken</th>
+              <th>Jars Given</th>
+              <th>Jars Taken</th>
+              <th>Capsules Given</th>
+              <th>Capsules Taken</th>
               <th>Payment</th>
               <th>Phone</th>
             </tr>
@@ -115,6 +117,8 @@ const History = () => {
                   <td>{item.customerId.address}</td>
                   <td>{item.jarsGiven}</td>
                   <td>{item.jarsTaken}</td>
+                  <td>{item.capsulesGiven}</td>
+                  <td>{item.capsulesTaken}</td>
                   <td>{item.customerPay}</td>
                   <td>{item.customerId.phone}</td>
                 </tr>

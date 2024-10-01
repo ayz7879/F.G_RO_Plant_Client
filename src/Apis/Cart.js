@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const BASE_URL = "https://f-g-ro-plant-api-1.onrender.com/api/cart";
-// const BASE_URL_LOCAL = "http://localhost:1000/api/cart";
+const BASE_URL_LOCAL = "http://localhost:1000/api/cart";
 
 // Add to Cart
 export const addToCart = async (
@@ -61,7 +61,12 @@ export const updateCartItem = async (
   pendingJars,
   pendingPayment,
   totalJarsGiven,
-  totalJarsTaken
+  totalJarsTaken,
+  capsulesGiven,
+  capsulesTaken,
+  totalCapsulesGiven,
+  totalCapsulesTaken,
+  pendingCapsules
 ) => {
   try {
     const response = await axios.put(
@@ -76,6 +81,11 @@ export const updateCartItem = async (
         pendingPayment,
         totalJarsGiven,
         totalJarsTaken,
+        capsulesGiven,
+        capsulesTaken,
+        totalCapsulesGiven,
+        totalCapsulesTaken,
+        pendingCapsules
       }
     );
     return response.data;

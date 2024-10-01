@@ -17,6 +17,7 @@ const CustomerCartPage = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const [editForm, setEditForm] = useState({
+    capsulesGiven: 0, capsulesTaken: 0,
     jarsGiven: 0,
     jarsTaken: 0,
     customerPay: 0,
@@ -75,6 +76,8 @@ const CustomerCartPage = () => {
     setSelectedItem(item);
     setEditForm({
       jarsGiven: item.jarsGiven,
+      capsulesGiven: item.capsulesGiven,
+      capsulesTaken: item.capsulesTaken,
       jarsTaken: item.jarsTaken,
       customerPay: item.customerPay,
       totalCustomerPaid: item.totalCustomerPaid,
@@ -104,17 +107,28 @@ const CustomerCartPage = () => {
             previousEntry.totalJarsGiven -
             previousEntry.jarsGiven +
             editForm.jarsGiven;
+
+
+          const totalCapsulesGiven = previousEntry.totalCapsulesGiven - previousEntry.capsulesGiven + editForm.capsulesGiven
+
           const totalJarsTaken =
             previousEntry.totalJarsTaken -
             previousEntry.jarsTaken +
             editForm.jarsTaken;
-          const pendingJars = totalJarsGiven - totalJarsTaken;
 
-          const totalAmount = totalJarsGiven * customerDetails.pricePerJar;
+          const totalCapsulesTaken = previousEntry.totalCapsulesTaken - previousEntry.capsulesTaken + editForm.capsulesTaken
+
+          const pendingJars = totalJarsGiven - totalJarsTaken;
+          const pendingCapsules = totalCapsulesGiven - totalCapsulesTaken;
+
+          const totalGiven = totalCapsulesGiven + totalJarsGiven
+          const totalAmount = totalGiven * customerDetails.pricePerJar;
+
           const totalCustomerPaid =
             previousEntry.totalCustomerPaid -
             previousEntry.customerPay +
             editForm.customerPay;
+
           const pendingPayment = totalAmount - totalCustomerPaid;
 
           const updateResponse = await updateCartItem(
@@ -128,7 +142,12 @@ const CustomerCartPage = () => {
             pendingJars,
             pendingPayment,
             totalJarsGiven,
-            totalJarsTaken
+            totalJarsTaken,
+            editForm.capsulesGiven,
+            editForm.capsulesTaken,
+            totalCapsulesGiven,
+            totalCapsulesTaken,
+            pendingCapsules
           );
 
           if (updateResponse.success) {
@@ -141,6 +160,7 @@ const CustomerCartPage = () => {
                     totalAmount,
                     totalCustomerPaid,
                     pendingJars,
+                    pendingCapsules,
                     pendingPayment,
                   }
                   : item
@@ -198,31 +218,51 @@ const CustomerCartPage = () => {
 
     // Add title
     doc.setFontSize(18);
+    doc.setFont("helvetica", "bold"); // Change font to Helvetica and make it bold
+
     doc.text("Customer Bill", 105, 10, null, null, "center");
 
     // Add customer details
     doc.setFontSize(12);
-    doc.text(`Name: ${customerDetails.name}`, 10, 20);
-    doc.text(`Phone: ${customerDetails.phone}`, 10, 30);
-    doc.text(`Jar Deposit: ${customerDetails.jarDeposit}`, 10, 40);
-    doc.text(`Price Per Jar: ${customerDetails.pricePerJar}/-`, 10, 50);
+    doc.setFont("helvetica", "normal"); // Reset font to normal
+
+    doc.text(`Name: ${customerDetails.name}`, 10, 25);
+    doc.text(`Phone: ${customerDetails.phone}`, 10, 35);
+    doc.text(`Deposit Jar: ${customerDetails.jarDeposit}`, 10, 45);
+    doc.text(`Deposit Capsule: ${customerDetails.jarDeposit}`, 10, 55);
+    doc.text(`Price Per Capsule or Jar : ${customerDetails.pricePerJar}/-`, 10, 65);
+
+    // Add a separator line
+    doc.line(10, 70, 200, 70); // Added a line for separation
 
     // Add summary details
     if (cartItems.length > 0) {
       doc.setFontSize(14);
-      doc.text("Summary------------", 10, 70);
+      doc.text("Summary", 10, 80);
       doc.setFontSize(12);
-      doc.text(`Total Jars Given: ${cartItems[0].totalJarsGiven}`, 10, 80);
-      doc.text(`Total Jars Taken: ${cartItems[0].totalJarsTaken}`, 10, 90);
-      doc.text(`Pending Jars: ${cartItems[0].pendingJars}`, 10, 100);
-      doc.text(`Total Amount: ${cartItems[0].totalAmount}/-`, 10, 110);
+
+      // Added summary details with spacing
+      doc.text(`Total Jars Given: ${cartItems[0].totalJarsGiven}`, 10, 90);
+      doc.text(`Total Jars Taken: ${cartItems[0].totalJarsTaken}`, 10, 100);
+      doc.text(`Pending Jars: ${cartItems[0].pendingJars}`, 10, 110);
+
+      doc.text(`Total Capsules Given: ${cartItems[0].totalCapsulesGiven}`, 10, 120);
+      doc.text(`Total Capsules Taken: ${cartItems[0].totalCapsulesTaken}`, 10, 130);
+      doc.text(`Pending Capsules: ${cartItems[0].pendingCapsules}`, 10, 140);
+
+      doc.text(`Total Amount: ${cartItems[0].totalAmount}/-`, 10, 150);
       doc.text(
         `Total Customer Paid: ${cartItems[0].totalCustomerPaid}/-`,
         10,
-        120
+        160
       );
-      doc.text(`Pending Payment: ${cartItems[0].pendingPayment}/-`, 10, 130);
+      doc.text(`Pending Payment: ${cartItems[0].pendingPayment}/-`, 10, 170);
+
+      doc.line(10, 180, 200, 180); // Added a line for separation
+
     }
+
+
 
     // Add table
     doc.autoTable({
@@ -231,7 +271,9 @@ const CustomerCartPage = () => {
           "#",
           "Date & Time",
           "Jars Given",
+          "Capsule Given",
           "Jars Taken",
+          "Capsule Taken",
           "Amount Paid",
           "Pending Payment",
         ],
@@ -240,11 +282,13 @@ const CustomerCartPage = () => {
         index + 1,
         formatDateTime(item.date),
         item.jarsGiven,
+        item.capsulesGiven,
         item.jarsTaken,
+        item.capsulesTaken,
         `${item.customerPay}/-`,
         `${item.pendingPayment}/-`,
       ]),
-      startY: 140, // Adjust startY to avoid overlapping with the customer details
+      startY: 190, // Adjusted startY to avoid overlapping with the summary
       theme: "grid", // Adds grid lines to the table
       styles: {
         fontSize: 10,
@@ -263,12 +307,25 @@ const CustomerCartPage = () => {
       },
     });
 
-    // Add footer
+    // // Add footer
+    // doc.setFontSize(10);
+    // doc.text(
+    //   `Generated on: ${new Date().toLocaleString()}`,
+    //   105,
+    //   doc.internal.pageSize.height - 10
+    // );
+
+    // doc.save("customer_cart.pdf");
+
+    // Add footer with a centered alignment
     doc.setFontSize(10);
     doc.text(
       `Generated on: ${new Date().toLocaleString()}`,
-      10,
-      doc.internal.pageSize.height - 10
+      105, // Centered horizontally
+      doc.internal.pageSize.height - 10,
+      null, // No specific alignment needed
+      null,
+      "center" // Center text
     );
 
     doc.save("customer_cart.pdf");
@@ -414,11 +471,13 @@ const CustomerCartPage = () => {
                       <th>Date & Time</th>
                       <th>Jars Given</th>
                       <th>Jars Taken</th>
+                      <th>Capsules Given</th>
+                      <th>Capsules Taken</th>
+
                       <th>Amount Paid</th>
                       <th>Pending Jars</th>
+                      <th>Pending Capsules</th>
                       <th>Pending Payment</th>
-                      <th>Total Jars Given</th>
-                      <th>Total Jars Taken</th>
                       <th>Actions</th>
                     </tr>
                   </thead>
@@ -429,11 +488,12 @@ const CustomerCartPage = () => {
                         <td>{formatDateTime(item.date)}</td>
                         <td>{item.jarsGiven}</td>
                         <td>{item.jarsTaken}</td>
+                        <td>{item.capsulesGiven}</td>
+                        <td>{item.capsulesTaken}</td>
                         <td>₹{item.customerPay}</td>
                         <td>{item.pendingJars}</td>
+                        <td>{item.pendingCapsules}</td>
                         <td>₹{item.pendingPayment}</td>
-                        <td>{item.totalJarsGiven}</td>
-                        <td>{item.totalJarsTaken}</td>
                         <td>
                           <FaEdit
                             className="text-warning mx-2"
@@ -477,6 +537,20 @@ const CustomerCartPage = () => {
               />
             </div>
             <div className="form-group mt-3">
+              <label htmlFor="jarsGiven">Capsules Given</label>
+              <input
+                type="number"
+                className="form-control"
+                id="capsulesGiven"
+                value={editForm.capsulesGiven}
+                onChange={(e) =>
+                  setEditForm({ ...editForm, capsulesGiven: +e.target.value })
+                }
+              />
+            </div>
+
+
+            <div className="form-group mt-3">
               <label htmlFor="jarsTaken">Jars Taken</label>
               <input
                 type="number"
@@ -485,6 +559,18 @@ const CustomerCartPage = () => {
                 value={editForm.jarsTaken}
                 onChange={(e) =>
                   setEditForm({ ...editForm, jarsTaken: +e.target.value })
+                }
+              />
+            </div>
+            <div className="form-group mt-3">
+              <label htmlFor="jarsTaken">Capsules Taken</label>
+              <input
+                type="number"
+                className="form-control"
+                id="capsulesTaken"
+                value={editForm.capsulesTaken}
+                onChange={(e) =>
+                  setEditForm({ ...editForm, capsulesTaken: +e.target.value })
                 }
               />
             </div>
