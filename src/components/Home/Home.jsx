@@ -37,7 +37,7 @@ const Home = () => {
     };
 
     axios
-      .get("http://localhost:1000/api/cart/for/dashbord", { params })
+      .get("https://f-g-ro-plant-api-1.onrender.com/api/cart/for/dashbord", { params })
       .then((response) => {
         const { today, thisMonth, customRange } = response.data.stats;
 
