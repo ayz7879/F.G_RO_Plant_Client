@@ -30,7 +30,6 @@ const AllCustomers = () => {
   const [formErrors, setFormErrors] = useState({});
   const [alert, setAlert] = useState({ message: "", variant: "" });
 
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchCustomers = async () => {

@@ -216,12 +216,17 @@ const CustomerCartPage = () => {
   const downloadPDF = () => {
     const doc = new jsPDF();
 
-    // Add title
+    doc.setFontSize(16);
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(22, 160, 133); // Brand color (customize as needed)
+    doc.text("F.G. Ro Plan - Child Water", 105, 10, null, null, "center");
+
+
+    // Add Document Title
     doc.setFontSize(18);
-    doc.setFont("helvetica", "bold"); // Change font to Helvetica and make it bold
-
-    doc.text("Customer Bill", 105, 10, null, null, "center");
-
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(0, 0, 0); // Reset text color to black
+    doc.text("Customer Bill", 105, 20, null, null, "center");
     // Add customer details
     doc.setFontSize(12);
     doc.setFont("helvetica", "normal"); // Reset font to normal
@@ -380,7 +385,7 @@ const CustomerCartPage = () => {
                       {cartItems[0].totalJarsTaken}
                     </div>
                   </div>
-                  <div className="col-6 col-md-4 mb-3">
+                  <div className="col-12 col-md-4 mb-3">
                     <div className="bg-secondary p-3 rounded">
                       <strong>Pending Jars:</strong> {cartItems[0].pendingJars}
                     </div>
@@ -399,8 +404,7 @@ const CustomerCartPage = () => {
                       {cartItems[0].totalCapsulesTaken}
                     </div>
                   </div>
-                  <div className="col-6 col-md-4 mb-3">
-
+                  <div className="col-12 col-md-4 mb-3">
                     <div className="bg-secondary p-3 rounded">
                       <strong>Pending Capsules :</strong> {cartItems[0].pendingCapsules}
                     </div>
@@ -409,16 +413,16 @@ const CustomerCartPage = () => {
 
                   <div className="col-6 col-md-4 mb-3">
                     <div className="bg-secondary p-3 rounded">
-                      <strong>Total Amount:</strong> ₹{cartItems[0].totalAmount}
+                      <strong>Total Payment Count :</strong> ₹{cartItems[0].totalAmount}
                     </div>
                   </div>
                   <div className="col-6 col-md-4 mb-3">
                     <div className="bg-secondary p-3 rounded">
-                      <strong>Total Customer Paid:</strong> ₹
+                      <strong>Total Customer Paid :</strong> ₹
                       {cartItems[0].totalCustomerPaid}
                     </div>
                   </div>
-                  <div className="col-6 col-md-4 mb-3">
+                  <div className="col-12 col-md-4 mb-3">
                     <div className="bg-secondary p-3 rounded">
                       <strong>Pending Payment:</strong> ₹
                       {cartItems[0].pendingPayment}

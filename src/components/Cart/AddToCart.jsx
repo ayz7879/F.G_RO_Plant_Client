@@ -15,6 +15,8 @@ const AddToCart = () => {
     customerPay: 0,
   });
   const [error, setError] = useState(""); // For validation error
+  const [loading, setLoading] = useState(false); // Loading state
+
 
   useEffect(() => {
     const fetchCustomers = async () => {
@@ -85,6 +87,9 @@ const AddToCart = () => {
       return;
     }
 
+
+    setLoading(true); // Start loading state
+
     const response = await addToCart(
       customerId,
       Number(capsulesGiven),
@@ -95,9 +100,14 @@ const AddToCart = () => {
     );
 
     if (response.success) {
+      // window.location.href = 'https://f-g-ro-plant.vercel.app'
       alert("Item added to cart successfully!");
+      setLoading(false);
+      window.location.reload(); // Reload the page or navigate to another page if needed
+
     } else {
       setError("Error adding to cart: " + response.message);
+      setLoading(false);
     }
   };
 
@@ -218,7 +228,7 @@ const AddToCart = () => {
           </div>
 
           {/* Submit Button */}
-          <button type="submit" className="btn btn-primary my-3 w-100">
+          <button type="submit" className="btn btn-primary my-3 w-100" disabled={loading}>
             Submit
           </button>
         </form>

@@ -37,6 +37,7 @@ const BottomBar = () => {
   // Filter customers based on search input
   const handleSearch = (query) => {
     setSearchQuery(query);
+
     if (query.trim() === "") {
       setFilteredCustomers(customers); // Show all customers if search query is empty
     } else {
