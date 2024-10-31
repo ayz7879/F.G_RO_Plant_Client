@@ -1,127 +1,161 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import "bootstrap/dist/css/bootstrap.min.css"; // Import Bootstrap CSS
+import "bootstrap/dist/css/bootstrap.min.css";
 
 const Home = () => {
   const [todayStats, setTodayStats] = useState({
-    totalJarsGivenToday: 0,
-    totalJarsTakenToday: 0,
-    totalCustomerPayToday: 0, // Added today pay stats
+    jarsGiven: 0,
+    jarsTaken: 0,
+    capsulesGiven: 0,
+    capsulesTaken: 0, customerPay: 0
   });
 
   const [monthStats, setMonthStats] = useState({
-    totalJarsGivenMonth: 0,
-    totalJarsTakenMonth: 0,
-    totalCustomerPayMonth: 0, // Added month pay stats
+    jarsGiven: 0,
+    jarsTaken: 0,
+    capsulesGiven: 0,
+    capsulesTaken: 0, customerPay: 0
   });
 
-  useEffect(() => {
-    // Fetch data from the API
+  const [customRangeStats, setCustomRangeStats] = useState({
+    jarsGiven: 0,
+    jarsTaken: 0,
+    capsulesGiven: 0,
+    capsulesTaken: 0, customerPay: 0
+  });
+
+  const [dateFilter, setDateFilter] = useState({
+    fromDate: "",
+    toDate: "",
+  });
+
+  // Fetch stats
+  const fetchStats = () => {
+    const params = {
+      startDate: dateFilter.fromDate,
+      endDate: dateFilter.toDate,
+    };
+
     axios
-      .get("https://f-g-ro-plant-api-1.onrender.com/api/cart/customers")
+      .get("http://localhost:1000/api/cart/for/dashbord", { params })
       .then((response) => {
-        const carts = response.data.carts;
+        const { today, thisMonth, customRange } = response.data.stats;
 
-        // Calculate today's and this month's stats
-        const today = new Date();
-        const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-        const startOfToday = new Date(today.setHours(0, 0, 0, 0));
-
-        let todayJarsGiven = 0;
-        let todayJarsTaken = 0;
-        let todayCustomerPay = 0; // Variable to store today's customer pay
-
-        let monthJarsGiven = 0;
-        let monthJarsTaken = 0;
-        let monthCustomerPay = 0; // Variable to store this month's customer pay
-
-        carts.forEach((cart) => {
-          cart.item.forEach((entry) => {
-            const entryDate = new Date(entry.date);
-
-            // Calculate today's stats
-            if (entryDate.toDateString() === startOfToday.toDateString()) {
-              todayJarsGiven += entry.jarsGiven;
-              todayJarsTaken += entry.jarsTaken;
-              todayCustomerPay += entry.customerPay || 0; // Calculate today's pay
-            }
-
-            // Calculate this month's stats
-            if (entryDate >= startOfMonth) {
-              monthJarsGiven += entry.jarsGiven;
-              monthJarsTaken += entry.jarsTaken;
-              monthCustomerPay += entry.customerPay || 0; // Calculate this month's pay
-            }
-          });
-        });
-
-        // Set the state for today's and this month's stats
         setTodayStats({
-          totalJarsGivenToday: todayJarsGiven,
-          totalJarsTakenToday: todayJarsTaken,
-          totalCustomerPayToday: todayCustomerPay, // Update today's pay
+          jarsGiven: today.jarsGiven || 0,
+          jarsTaken: today.jarsTaken || 0,
+          capsulesGiven: today.capsulesGiven || 0,
+          capsulesTaken: today.capsulesTaken || 0,
+          customerPay: today.customerPay || 0
         });
 
         setMonthStats({
-          totalJarsGivenMonth: monthJarsGiven,
-          totalJarsTakenMonth: monthJarsTaken,
-          totalCustomerPayMonth: monthCustomerPay, // Update this month's pay
+          jarsGiven: thisMonth.jarsGiven || 0,
+          jarsTaken: thisMonth.jarsTaken || 0,
+          capsulesGiven: thisMonth.capsulesGiven || 0,
+          capsulesTaken: thisMonth.capsulesTaken || 0,
+          customerPay: thisMonth.customerPay || 0
+        });
+
+        setCustomRangeStats({
+          jarsGiven: customRange.jarsGiven || 0,
+          jarsTaken: customRange.jarsTaken || 0,
+          capsulesGiven: customRange.capsulesGiven || 0,
+          capsulesTaken: customRange.capsulesTaken || 0,
+          customerPay: customRange.customerPay || 0
         });
       })
-      .catch((error) => {
-        console.error("Error fetching data:", error);
-      });
-  }, []);
+      .catch((error) => console.error("Error fetching data:", error));
+  };
+
+  // Fetch stats on load and when dateFilter changes
+  useEffect(() => {
+    fetchStats();
+  }, [dateFilter]);
+
+  // Handle date filter changes
+  const handleDateChange = (e) => {
+    const { name, value } = e.target;
+    setDateFilter((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
 
   return (
-    <div className="container">
-      {/* Section for Today's Data */}
+    <div className="container pb-5">
       <h2 className="mb-4">Today's Data</h2>
       <div className="row">
-        <div className="col-md-4 mb-4">
-          <div className="card text-center p-3">
-            <h5>Jars Given</h5>
-            <p className="fs-4">{todayStats.totalJarsGivenToday}</p>
-          </div>
+        <DataCard title="Jars" given={todayStats.jarsGiven} taken={todayStats.jarsTaken} />
+        <DataCard title="Capsules" given={todayStats.capsulesGiven} taken={todayStats.capsulesTaken} />
+        <PaymentCart title="Payment Resive" customerPay={todayStats.customerPay || 0} />
+      </div>
+
+      <h2 className="mb-4">This Month's Data</h2>
+      <div className="row">
+        <DataCard title="Jars" given={monthStats.jarsGiven} taken={monthStats.jarsTaken} />
+        <DataCard title="Capsules" given={monthStats.capsulesGiven} taken={monthStats.capsulesTaken} />
+        <PaymentCart title="Payment Resive" customerPay={monthStats.customerPay || 0} />
+
+      </div>
+
+      <h2 className="mb-4">Filter By Date</h2>
+      <div className="row mb-4">
+        <div className="col">
+          <label>From Date:</label>
+          <input type="date" className="form-control" name="fromDate" value={dateFilter.fromDate} onChange={handleDateChange} />
         </div>
-        <div className="col-md-4 mb-4">
-          <div className="card  text-center p-3">
-            <h5>Jars Taken</h5>
-            <p className="fs-4">{todayStats.totalJarsTakenToday}</p>
-          </div>
-        </div>
-        <div className="col-md-4 mb-4">
-          <div className="card  text-center p-3">
-            <h5>Payment</h5>
-            <p className="fs-4">₹{todayStats.totalCustomerPayToday}</p>
-          </div>
+        <div className="col">
+          <label>To Date:</label>
+          <input type="date" className="form-control" name="toDate" value={dateFilter.toDate} onChange={handleDateChange} />
         </div>
       </div>
 
-      {/* Section for This Month's Data */}
-      <h2 className="mb-4">This Month's Data</h2>
+      <h2 className="mb-4">Custom Range Data</h2>
       <div className="row">
-        <div className="col-md-4 mb-4">
-          <div className="card  text-center p-3">
-            <h5>Jars Given</h5>
-            <p className="fs-4">{monthStats.totalJarsGivenMonth}</p>
-          </div>
-        </div>
-        <div className="col-md-4 mb-4">
-          <div className="card  text-center p-3">
-            <h5>Jars Taken</h5>
-            <p className="fs-4">{monthStats.totalJarsTakenMonth}</p>
-          </div>
-        </div>
-        <div className="col-md-4 mb-4">
-          <div className="card  text-center p-3">
-            <h5>Payment</h5>
-            <p className="fs-4">₹{monthStats.totalCustomerPayMonth}</p>
-          </div>
-        </div>
+        <DataCard title="Jars" given={customRangeStats.jarsGiven} taken={customRangeStats.jarsTaken} />
+        <DataCard title="Capsules" given={customRangeStats.capsulesGiven} taken={customRangeStats.capsulesTaken} />
+        <PaymentCart title="Payment Resive" customerPay={customRangeStats.customerPay || 0} />
+
       </div>
     </div>
   );
 };
 
+// Card Component
+const DataCard = ({ title, given, taken }) => (
+  <div className="col-md-6 mb-4">
+    <div className="card p-3 text-center">
+      <h5>{title}</h5>
+      <div className="d-flex justify-content-around align-items-center">
+        <div className="text-center" style={{ flex: 1 }}>
+          <h6>Given</h6>
+          <p className="fs-4">{given}</p>
+        </div>
+        <div className="vr mx-3" style={{ height: "50px", borderColor: "#ddd" }}></div>
+        <div className="text-center" style={{ flex: 1 }}>
+          <h6>Taken</h6>
+          <p className="fs-4">{taken}</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+);
+const PaymentCart = ({ title, customerPay }) => (
+  <div className="col-md-6 mb-4">
+    <div className="card p-3 text-center">
+      <h5>{title}</h5>
+      <div className="text-center" style={{ flex: 1 }}>
+        <p className="fs-4">{customerPay}</p>
+      </div>
+      {/* <div className="d-flex justify-content-around align-items-center">
+      </div> */}
+
+    </div>
+  </div>
+);
+
 export default Home;
+
+

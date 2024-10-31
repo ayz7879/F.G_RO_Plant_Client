@@ -17,7 +17,7 @@ const App = () => {
   return (
     <Router>
       <Navbar />
-      <div className="mt-2 text-light bg-dark" style={{marginBottom:"4.5rem"}}>
+      <div className="pt-2 mb-5 text-light bg-dark" style={{ height: 'auto', minHeight: "100vh" }}>
         <Routes>
           <Route path="/admin-register" element={<AdminRegister />} />{" "}
           <Route path="/admin-login" element={<AdminLogin />} />{" "}
@@ -29,8 +29,8 @@ const App = () => {
           <Route path="/history" element={<History />} />
           <Route path="/" element={<Home />} />
         </Routes>
-      </div>  
-      <BottomBar/>
+      </div>
+      <BottomBar />
     </Router>
   );
 };
