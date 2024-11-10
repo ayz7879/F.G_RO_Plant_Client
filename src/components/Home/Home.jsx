@@ -28,6 +28,26 @@ const Home = () => {
     fromDate: "",
     toDate: "",
   });
+  // Set default date range to 1st of the current month to today's date
+  const setDefaultDateRange = () => {
+    const today = new Date();
+    
+    // Current date in YYYY-MM-DD format
+    const currentDate = today.toISOString().split('T')[0];
+    
+    // Set the date to the 1st of the current month
+    const firstDayOfMonth = new Date(Date.UTC(today.getFullYear(), today.getMonth(), 1));
+    
+    // Ensure the date is correctly set to 1st day of the month
+    const firstDate = firstDayOfMonth.toISOString().split('T')[0];
+
+    // Set the date range
+    setDateFilter({
+      fromDate: firstDate,
+      toDate: currentDate,
+    });
+};
+
 
   // Fetch stats
   const fetchStats = () => {
@@ -71,7 +91,14 @@ const Home = () => {
 
   // Fetch stats on load and when dateFilter changes
   useEffect(() => {
-    fetchStats();
+    setDefaultDateRange(); // Set default date range on component mount
+  }, []);
+
+  // Fetch stats whenever dateFilter changes
+  useEffect(() => {
+    if (dateFilter.fromDate && dateFilter.toDate) {
+      fetchStats();
+    }
   }, [dateFilter]);
 
   // Handle date filter changes
@@ -89,14 +116,14 @@ const Home = () => {
       <div className="row">
         <DataCard title="Jars" given={todayStats.jarsGiven} taken={todayStats.jarsTaken} />
         <DataCard title="Capsules" given={todayStats.capsulesGiven} taken={todayStats.capsulesTaken} />
-        <PaymentCart title="Payment Resive" customerPay={todayStats.customerPay || 0} />
+        <PaymentCart title="Payment Receive" customerPay={todayStats.customerPay || 0} />
       </div>
 
       <h2 className="mb-4">This Month's Data</h2>
       <div className="row">
         <DataCard title="Jars" given={monthStats.jarsGiven} taken={monthStats.jarsTaken} />
         <DataCard title="Capsules" given={monthStats.capsulesGiven} taken={monthStats.capsulesTaken} />
-        <PaymentCart title="Payment Resive" customerPay={monthStats.customerPay || 0} />
+        <PaymentCart title="Payment Receive" customerPay={monthStats.customerPay || 0} />
 
       </div>
 
@@ -116,7 +143,7 @@ const Home = () => {
       <div className="row">
         <DataCard title="Jars" given={customRangeStats.jarsGiven} taken={customRangeStats.jarsTaken} />
         <DataCard title="Capsules" given={customRangeStats.capsulesGiven} taken={customRangeStats.capsulesTaken} />
-        <PaymentCart title="Payment Resive" customerPay={customRangeStats.customerPay || 0} />
+        <PaymentCart title="Payment Receive" customerPay={customRangeStats.customerPay || 0} />
 
       </div>
     </div>

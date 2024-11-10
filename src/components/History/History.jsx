@@ -13,11 +13,11 @@ const History = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10; // Items to show per page
 
-
   const fetchAllCart = async () => {
     try {
       const response = await axios.get(
         "https://f-g-ro-plant-api-1.onrender.com/api/cart/customers"
+        // "http://localhost:1000/api/cart/customers"
       );
       const carts = response.data.carts;
       const itemsWithCustomerDetails = carts.flatMap((cart) =>
@@ -74,12 +74,32 @@ const History = () => {
     const doc = new jsPDF();
 
     doc.setFontSize(18);
-    doc.text("F.G. RO Plant Child Water - Customer History", 105, 10, null, null, "center");
+    doc.text(
+      "F.G. RO Plant Child Water - Customer History",
+      105,
+      10,
+      null,
+      null,
+      "center"
+    );
     doc.setFontSize(12);
     doc.text(`Generated on: ${new Date().toLocaleString()}`, 10, 20);
 
     doc.autoTable({
-      head: [["#", "Date", "Name", "Address", "Jars Given", "Jars Taken", "Capsules Given", "Capsules Taken", "Payment", "Phone"]],
+      head: [
+        [
+          "#",
+          "Date",
+          "Name",
+          "Address",
+          "Jars Given",
+          "Jars Taken",
+          "Capsules Given",
+          "Capsules Taken",
+          "Payment",
+          "Phone",
+        ],
+      ],
       body: filteredItems.map((item, index) => [
         index + 1,
         new Date(item.date).toLocaleDateString(),
@@ -94,7 +114,11 @@ const History = () => {
       ]),
       theme: "striped",
       styles: { fontSize: 10, cellPadding: 3 },
-      headStyles: { fillColor: [22, 160, 133], textColor: [255, 255, 255], fontStyle: "bold" },
+      headStyles: {
+        fillColor: [22, 160, 133],
+        textColor: [255, 255, 255],
+        fontStyle: "bold",
+      },
       startY: 30,
     });
 
@@ -181,19 +205,23 @@ const History = () => {
       </div>
 
       {/* Pagination */}
-      <Pagination className="justify-content-center mt-4">
-        {[...Array(Math.ceil(filteredItems.length / itemsPerPage)).keys()].map(
-          (pageNum) => (
-            <Pagination.Item
-              key={pageNum + 1}
-              active={pageNum + 1 === currentPage}
-              onClick={() => handlePageChange(pageNum + 1)}
-            >
-              {pageNum + 1}
-            </Pagination.Item>
-          )
-        )}
-      </Pagination>
+      <div>
+        <div className="overflow-auto">
+          <Pagination className="d-flex justify-content-start mt-4">
+            {[
+              ...Array(Math.ceil(filteredItems.length / itemsPerPage)).keys(),
+            ].map((pageNum) => (
+              <Pagination.Item
+                key={pageNum + 1}
+                active={pageNum + 1 === currentPage}
+                onClick={() => handlePageChange(pageNum + 1)}
+              >
+                {pageNum + 1}
+              </Pagination.Item>
+            ))}
+          </Pagination>
+        </div>
+      </div>
     </div>
   );
 };
