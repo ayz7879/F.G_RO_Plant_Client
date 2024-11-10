@@ -18,21 +18,24 @@ const BottomBar = () => {
 
   // Fetch customers from an API or state
   useEffect(() => {
-    const fetchCustomers = async () => {
-      try {
-        const result = await getAllCustomers(); // Fetching customers
-        if (result && result.customers) {
-          setCustomers(result.customers);
-          setFilteredCustomers(result.customers); // Fix for setting initial customer data
-        } else {
-          setError("No customers found.");
+    // Only fetch customers when the modal is opened
+    if (showModal) {
+      const fetchCustomers = async () => {
+        try {
+          const result = await getAllCustomers(); // Fetching customers
+          if (result && result.customers) {
+            setCustomers(result.customers); // Set full list of customers
+            setFilteredCustomers(result.customers); // Initialize filtered list with all customers
+          } else {
+            setError("No customers found.");
+          }
+        } catch (err) {
+          setError("Error fetching customers.");
         }
-      } catch (err) {
-        setError("Error fetching customers");
-      }
-    };
-    fetchCustomers();
-  }, [showModal, searchQuery]);
+      };
+      fetchCustomers();
+    }
+  }, [showModal]);
 
   // Filter customers based on search input
   const handleSearch = (query) => {
@@ -67,6 +70,7 @@ const BottomBar = () => {
           // Navigate to the cart page
           navigate(`/get-cart/${customerId}`);
           setShowModal(false);
+          setSearchQuery("");
         } else {
           // Show error if the cart is empty or not found
           alert("Cart is empty or not found");

@@ -64,6 +64,7 @@ const AddToCart = () => {
       customerPay: 0,
       customerId: customer._id,
     });
+    setSearchQuery(""); // Clear search query when customer is selected
     setError(""); // Clear error when a customer is selected
   };
 
@@ -135,7 +136,13 @@ const AddToCart = () => {
 
       {/* Show filtered customer list */}
       {searchQuery && filteredCustomers.length > 0 && (
-        <div className="list-group mt-2">
+        <div
+          className="list-group mt-2"
+          style={{
+            maxHeight: "200px", // Set max height for scrolling
+            overflowY: "auto", // Enable scrolling
+          }}
+        >
           {filteredCustomers.map((customer) => (
             <button
               key={customer._id}
