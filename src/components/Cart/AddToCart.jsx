@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { getAllCustomers } from "../../Apis/Customer";
 import { addToCart } from "../../Apis/Cart";
+import { Spinner } from "react-bootstrap";
 
 const AddToCart = () => {
   const [customers, setCustomers] = useState([]);
@@ -95,23 +96,26 @@ const AddToCart = () => {
     }
 
     setLoading(true); // Start loading state
+    try {
+      const response = await addToCart(
+        customerId,
+        Number(capsulesGiven),
+        Number(capsulesTaken),
+        Number(jarsGiven),
+        Number(jarsTaken),
+        Number(customerPay)
+      );
 
-    const response = await addToCart(
-      customerId,
-      Number(capsulesGiven),
-      Number(capsulesTaken),
-      Number(jarsGiven),
-      Number(jarsTaken),
-      Number(customerPay)
-    );
-
-    if (response.success) {
-      // window.location.href = 'https://f-g-ro-plant.vercel.app'
-      alert("Item added to cart successfully!");
-      setLoading(false);
-    } else {
-      setError("Error adding to cart: " + response.message);
-      setLoading(false);
+      if (response.success) {
+        // window.location.href = 'https://f-g-ro-plant.vercel.app'
+        alert("Item added to cart successfully!");
+      } else {
+        setError("Error adding to cart: " + response.message);
+      }
+    } catch (err) {
+      setError("Error adding to cart: " + err.message);
+    } finally {
+      setLoading(false); // Stop loading once the operation is complete (success or error)
     }
   };
 
@@ -243,7 +247,7 @@ const AddToCart = () => {
             className="btn btn-primary my-3 w-100"
             disabled={loading}
           >
-            Submit
+            {loading ? <Spinner animation="border" size="sm" /> : "Submit"}
           </button>
         </form>
       )}

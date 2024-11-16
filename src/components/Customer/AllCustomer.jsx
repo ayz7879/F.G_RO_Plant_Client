@@ -1,7 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { Modal, Button, Table, Form, Alert, Container } from "react-bootstrap";
+import {
+  Modal,
+  Button,
+  Table,
+  Form,
+  Alert,
+  Container,
+  Spinner,
+} from "react-bootstrap";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+
 import {
   getAllCustomers,
   deleteCustomer,
@@ -29,7 +38,6 @@ const AllCustomers = () => {
   });
   const [formErrors, setFormErrors] = useState({});
   const [alert, setAlert] = useState({ message: "", variant: "" });
-
 
   useEffect(() => {
     const fetchCustomers = async () => {
@@ -132,6 +140,7 @@ const AllCustomers = () => {
     }
 
     if (selectedCustomer) {
+      setLoading(true);
       try {
         const result = await updateCustomer(
           selectedCustomer._id,
@@ -160,6 +169,8 @@ const AllCustomers = () => {
       } catch (err) {
         handleCloseEditModal();
         setAlert({ message: "Error updating customer", variant: "danger" });
+      } finally {
+        setLoading(false); // Stop loading once the operation is done
       }
     }
   };
@@ -170,7 +181,7 @@ const AllCustomers = () => {
       setFormErrors(errors);
       return;
     }
-
+    setLoading(true);
     try {
       const result = await addCustomer(
         formData.name,
@@ -192,6 +203,8 @@ const AllCustomers = () => {
     } catch (err) {
       handleCloseAddCustomerModal();
       setAlert({ message: "Error adding customer", variant: "danger" });
+    } finally {
+      setLoading(false); // Set loading to false once operation is complete (whether success or failure)
     }
   };
 
@@ -247,7 +260,8 @@ const AllCustomers = () => {
                 <td>{customer.phone}</td>
                 <td>{customer.advancePaid}</td>
                 <td>{customer.jarDeposit}</td>
-                <td>{customer.capsuleDeposit || '0'}</td> {/* Ensure data matches header */}
+                <td>{customer.capsuleDeposit || "0"}</td>{" "}
+                {/* Ensure data matches header */}
                 <td>{customer.pricePerJar}</td>
                 <td>
                   <FaEdit
@@ -394,8 +408,12 @@ const AllCustomers = () => {
           <Button variant="secondary" onClick={handleCloseEditModal}>
             Close
           </Button>
-          <Button variant="primary" onClick={handleUpdate}>
-            Save Changes
+          <Button variant="primary" onClick={handleUpdate} disabled={loading}>
+            {loading ? (
+              <Spinner animation="border" size="sm" />
+            ) : (
+              "Save Changes"
+            )}
           </Button>
         </Modal.Footer>
       </Modal>
@@ -520,8 +538,16 @@ const AllCustomers = () => {
           <Button variant="secondary" onClick={handleCloseAddCustomerModal}>
             Close
           </Button>
-          <Button variant="primary" onClick={handleAddCustomer}>
-            Add Customer
+          <Button
+            variant="primary"
+            onClick={handleAddCustomer}
+            disabled={loading}
+          >
+            {loading ? (
+              <Spinner animation="border" size="sm" /> // Spinner shows when loading
+            ) : (
+              "Add Customer" // Normal text when not loading
+            )}
           </Button>
         </Modal.Footer>
       </Modal>
@@ -551,7 +577,6 @@ const AllCustomers = () => {
 };
 
 export default AllCustomers;
-
 
 // import React, { useState, useEffect } from "react";
 // import { Modal, Button, Table, Form, Alert, Container } from "react-bootstrap";
@@ -618,7 +643,6 @@ export default AllCustomers;
 //       errors.pricePerJar = "Price per jar must be a positive number"; // Added validation
 //     return errors;
 //   };
-
 
 //   const handleDelete = async () => {
 //     if (customerToDelete) {
