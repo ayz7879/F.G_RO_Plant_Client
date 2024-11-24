@@ -108,7 +108,6 @@ const AddToCart = () => {
 
       if (response.success) {
         // window.location.href = 'https://f-g-ro-plant.vercel.app'
-        alert("Item added to cart successfully!");
         // Reset form data and selected customer
         setFormData({
           jarsGiven: 0,
@@ -120,6 +119,8 @@ const AddToCart = () => {
         });
         setSelectedCustomer(null); // Deselect the customer
         setSearchQuery(""); // Clear the search query
+        
+        alert("Item added to cart successfully!");
       } else {
         setError("Error adding to cart: " + response.message);
       }
