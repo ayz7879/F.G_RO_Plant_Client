@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import { adminRegister } from "../../Apis/Admin";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { Link, useNavigate } from "react-router-dom"; // Import useNavigate
 import { Spinner } from "react-bootstrap";
-
 const AdminRegister = () => {
   // State to capture form data
   const [formData, setFormData] = useState({
