@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { adminLogin } from "../../Apis/Admin";
 import { Link, useNavigate } from "react-router-dom";
+import { Spinner } from "react-bootstrap";
 
 const AdminLogin = () => {
   const [formData, setFormData] = useState({
@@ -9,13 +10,14 @@ const AdminLogin = () => {
   });
 
   const [message, setMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   // Handle input change and update formData state
   const handleChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value,
+      [e.target.name]: e.target.value.toLowerCase(),
     });
   };
 
@@ -29,12 +31,13 @@ const AdminLogin = () => {
       alert("Both username and password are required.");
       return;
     }
+    setIsLoading(true);
     try {
       const result = await adminLogin(username, password);
       if (result.success) {
         localStorage.setItem("token", result.token);
         localStorage.setItem("username", username);
-        window.location.href = '/';
+        window.location.href = "/";
         alert(result.message);
       } else {
         setMessage(result.message);
@@ -43,12 +46,14 @@ const AdminLogin = () => {
     } catch (error) {
       setMessage("An error occurred. Please try again.");
       alert("An error occurred. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <div
-      style={{ width: "100%",height:"100vh" }}
+      style={{ width: "100%", height: "100vh" }}
       className="d-flex flex-column justify-content-center align-items-center gap-5 mt-4 bg-dark text-white"
     >
       <h1 className="text-center">Welcome to F.G RO Plant</h1>
@@ -80,11 +85,13 @@ const AdminLogin = () => {
             />
           </div>
           <div className="text-center">
-            <input
+            <button
               type="submit"
-              value="Login"
               className="btn btn-primary btn-block w-100"
-            />
+              disabled={isLoading}
+            >
+              {isLoading ? <Spinner animation="border" size="sm" /> : "Login"}
+            </button>
           </div>
         </form>
         {message && <p className="text-center mt-3">{message}</p>}

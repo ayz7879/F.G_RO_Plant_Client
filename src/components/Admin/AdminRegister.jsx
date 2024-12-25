@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { adminRegister } from "../../Apis/Admin";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { Spinner } from "react-bootstrap";
 
 const AdminRegister = () => {
   // State to capture form data
@@ -9,6 +10,7 @@ const AdminRegister = () => {
     username: "",
     password: "",
   });
+  const [isLoading, setIsLoading] = useState(false);
 
   const [message, setMessage] = useState(""); // State for success/error messages
 
@@ -18,7 +20,7 @@ const AdminRegister = () => {
   const handleChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value, // Dynamically update the input fields
+      [e.target.name]: e.target.value.toLowerCase(), // Dynamically update the input fields
     });
   };
 
@@ -27,15 +29,25 @@ const AdminRegister = () => {
     e.preventDefault();
     const { name, username, password } = formData;
 
+    // Validation
+    if (!username || !password || !name) {
+      alert("All field are required.");
+      return;
+    }
+    setIsLoading(true);
     // Call the API with the form data
-    const result = await adminRegister(name, username, password);
-
-    // Check the result and act accordingly
-    if (result.success) {
-      alert("Registration successful! Redirecting to login..."); // Show success alert
-      navigate("/admin-login"); // Redirect to login page
-    } else {
-      setMessage(result.message); // Show error message if registration failed
+    try {
+      const result = await adminRegister(name, username, password);
+      if (result.success) {
+        window.location.href = "/admin-login";
+        alert("Registration successful! Redirecting to login...");
+      } else {
+        setMessage(result.message); // Show error message if registration failed
+      }
+    } catch (error) {
+      alert("An error occurred. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -85,11 +97,13 @@ const AdminRegister = () => {
             />
           </div>
           <div className="text-center">
-            <input
+            <button
               type="submit"
-              value="Register"
               className="btn btn-primary btn-block w-100"
-            />
+              disabled={isLoading}
+            >
+              {isLoading ? <Spinner animation="border" size="sm" /> : "Register"}
+            </button>
           </div>
         </form>
         {message && <p className="text-center mt-3 text-danger">{message}</p>}
