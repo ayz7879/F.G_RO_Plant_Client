@@ -1,21 +1,21 @@
 import React, { useState } from "react";
 import { adminLogin } from "../../Apis/Admin";
-import { Link } from "react-router-dom"; // Import Link from react-router-dom
+import { Link, useNavigate } from "react-router-dom";
 
 const AdminLogin = () => {
-  // State to capture form data
   const [formData, setFormData] = useState({
     username: "",
     password: "",
   });
 
-  const [message, setMessage] = useState(""); // State for success/error messages
+  const [message, setMessage] = useState("");
+  const navigate = useNavigate();
 
   // Handle input change and update formData state
   const handleChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value, // Dynamically update the input fields
+      [e.target.name]: e.target.value,
     });
   };
 
@@ -24,19 +24,35 @@ const AdminLogin = () => {
     e.preventDefault();
     const { username, password } = formData;
 
-    // Call the API with the form data
-    const result = await adminLogin(username, password);
-
-    // Update the message based on API response
-    setMessage(result.message);
+    // Validation
+    if (!username || !password) {
+      alert("Both username and password are required.");
+      return;
+    }
+    try {
+      const result = await adminLogin(username, password);
+      if (result.success) {
+        localStorage.setItem("token", result.token);
+        localStorage.setItem("username", username);
+        window.location.href = '/';
+        alert(result.message);
+      } else {
+        setMessage(result.message);
+        alert(result.message);
+      }
+    } catch (error) {
+      setMessage("An error occurred. Please try again.");
+      alert("An error occurred. Please try again.");
+    }
   };
 
   return (
     <div
-      style={{ height: "100vh", width: "100%" }}
-      className="d-flex justify-content-center align-items-center bg-dark text-white"
+      style={{ width: "100%",height:"100vh" }}
+      className="d-flex flex-column justify-content-center align-items-center gap-5 mt-4 bg-dark text-white"
     >
-      <div className="w-50">
+      <h1 className="text-center">Welcome to F.G RO Plant</h1>
+      <div className="container">
         <h1 className="text-center">Admin Login</h1>
         <form onSubmit={handleSubmit}>
           <div className="form-group mb-3">

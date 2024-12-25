@@ -8,6 +8,10 @@ import jsPDF from "jspdf";
 import "jspdf-autotable";
 
 const CustomerCartPage = () => {
+  const username = localStorage.getItem("username");
+  const validUsernames = ["htg", "ls", "boldrunner"];
+  const lowerCaseUsername = username ? username.toLowerCase() : "";
+  const isValidUser = validUsernames.includes(lowerCaseUsername);
   const { customerId } = useParams();
   const [customerDetails, setCustomerDetails] = useState(null);
   const [cartItems, setCartItems] = useState([]);
@@ -17,7 +21,8 @@ const CustomerCartPage = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const [editForm, setEditForm] = useState({
-    capsulesGiven: 0, capsulesTaken: 0,
+    capsulesGiven: 0,
+    capsulesTaken: 0,
     jarsGiven: 0,
     jarsTaken: 0,
     customerPay: 0,
@@ -108,20 +113,25 @@ const CustomerCartPage = () => {
             previousEntry.jarsGiven +
             editForm.jarsGiven;
 
-
-          const totalCapsulesGiven = previousEntry.totalCapsulesGiven - previousEntry.capsulesGiven + editForm.capsulesGiven
+          const totalCapsulesGiven =
+            previousEntry.totalCapsulesGiven -
+            previousEntry.capsulesGiven +
+            editForm.capsulesGiven;
 
           const totalJarsTaken =
             previousEntry.totalJarsTaken -
             previousEntry.jarsTaken +
             editForm.jarsTaken;
 
-          const totalCapsulesTaken = previousEntry.totalCapsulesTaken - previousEntry.capsulesTaken + editForm.capsulesTaken
+          const totalCapsulesTaken =
+            previousEntry.totalCapsulesTaken -
+            previousEntry.capsulesTaken +
+            editForm.capsulesTaken;
 
           const pendingJars = totalJarsGiven - totalJarsTaken;
           const pendingCapsules = totalCapsulesGiven - totalCapsulesTaken;
 
-          const totalGiven = totalCapsulesGiven + totalJarsGiven
+          const totalGiven = totalCapsulesGiven + totalJarsGiven;
           const totalAmount = totalGiven * customerDetails.pricePerJar;
 
           const totalCustomerPaid =
@@ -155,14 +165,14 @@ const CustomerCartPage = () => {
               prevItems.map((item) =>
                 item._id === selectedItem._id
                   ? {
-                    ...item,
-                    ...editForm,
-                    totalAmount,
-                    totalCustomerPaid,
-                    pendingJars,
-                    pendingCapsules,
-                    pendingPayment,
-                  }
+                      ...item,
+                      ...editForm,
+                      totalAmount,
+                      totalCustomerPaid,
+                      pendingJars,
+                      pendingCapsules,
+                      pendingPayment,
+                    }
                   : item
               )
             );
@@ -221,7 +231,6 @@ const CustomerCartPage = () => {
     doc.setTextColor(22, 160, 133); // Brand color (customize as needed)
     doc.text("F.G. Ro Plan - Child Water", 105, 10, null, null, "center");
 
-
     // Add Document Title
     doc.setFontSize(18);
     doc.setFont("helvetica", "bold");
@@ -235,7 +244,11 @@ const CustomerCartPage = () => {
     doc.text(`Phone: ${customerDetails.phone}`, 10, 35);
     doc.text(`Deposit Jar: ${customerDetails.jarDeposit}`, 10, 45);
     doc.text(`Deposit Capsule: ${customerDetails.jarDeposit}`, 10, 55);
-    doc.text(`Price Per Capsule or Jar : ${customerDetails.pricePerJar}/-`, 10, 65);
+    doc.text(
+      `Price Per Capsule or Jar : ${customerDetails.pricePerJar}/-`,
+      10,
+      65
+    );
 
     // Add a separator line
     doc.line(10, 70, 200, 70); // Added a line for separation
@@ -251,8 +264,16 @@ const CustomerCartPage = () => {
       doc.text(`Total Jars Taken: ${cartItems[0].totalJarsTaken}`, 10, 100);
       doc.text(`Pending Jars: ${cartItems[0].pendingJars}`, 10, 110);
 
-      doc.text(`Total Capsules Given: ${cartItems[0].totalCapsulesGiven}`, 10, 120);
-      doc.text(`Total Capsules Taken: ${cartItems[0].totalCapsulesTaken}`, 10, 130);
+      doc.text(
+        `Total Capsules Given: ${cartItems[0].totalCapsulesGiven}`,
+        10,
+        120
+      );
+      doc.text(
+        `Total Capsules Taken: ${cartItems[0].totalCapsulesTaken}`,
+        10,
+        130
+      );
       doc.text(`Pending Capsules: ${cartItems[0].pendingCapsules}`, 10, 140);
 
       doc.text(`Total Amount: ${cartItems[0].totalAmount}/-`, 10, 150);
@@ -264,10 +285,7 @@ const CustomerCartPage = () => {
       doc.text(`Pending Payment: ${cartItems[0].pendingPayment}/-`, 10, 170);
 
       doc.line(10, 180, 200, 180); // Added a line for separation
-
     }
-
-
 
     // Add table
     doc.autoTable({
@@ -363,12 +381,12 @@ const CustomerCartPage = () => {
                 <strong>Deposit Jars :</strong> {customerDetails.jarDeposit}
               </p>
               <p>
-
-                <strong>Deposit Capsules :</strong> {customerDetails.capsuleDeposit}
-
+                <strong>Deposit Capsules :</strong>{" "}
+                {customerDetails.capsuleDeposit}
               </p>
               <p>
-                <strong>Price Per Capsule or Jar : </strong> ₹{customerDetails.pricePerJar}
+                <strong>Price Per Capsule or Jar : </strong> ₹
+                {customerDetails.pricePerJar}
               </p>
 
               {cartItems.length > 0 && (
@@ -406,14 +424,15 @@ const CustomerCartPage = () => {
                   </div>
                   <div className="col-12 col-md-4 mb-3">
                     <div className="bg-secondary p-3 rounded">
-                      <strong>Pending Capsules :</strong> {cartItems[0].pendingCapsules}
+                      <strong>Pending Capsules :</strong>{" "}
+                      {cartItems[0].pendingCapsules}
                     </div>
                   </div>
 
-
                   <div className="col-6 col-md-4 mb-3">
                     <div className="bg-secondary p-3 rounded">
-                      <strong>Total Payment Count :</strong> ₹{cartItems[0].totalAmount}
+                      <strong>Total Payment Count :</strong> ₹
+                      {cartItems[0].totalAmount}
                     </div>
                   </div>
                   <div className="col-6 col-md-4 mb-3">
@@ -482,7 +501,7 @@ const CustomerCartPage = () => {
                       <th>Pending Jars</th>
                       <th>Pending Capsules</th>
                       <th>Pending Payment</th>
-                      <th>Actions</th>
+                      {isValidUser && <th>Actions</th>}
                     </tr>
                   </thead>
                   <tbody>
@@ -498,18 +517,20 @@ const CustomerCartPage = () => {
                         <td>{item.pendingJars}</td>
                         <td>{item.pendingCapsules}</td>
                         <td>₹{item.pendingPayment}</td>
-                        <td>
-                          <FaEdit
-                            className="text-warning mx-2"
-                            onClick={() => handleEditClick(item)}
-                            style={{ cursor: "pointer" }}
-                          />
-                          <FaTrash
-                            className="text-danger mx-2"
-                            onClick={() => handleDeleteClick(item._id)}
-                            style={{ cursor: "pointer" }}
-                          />
-                        </td>
+                        {isValidUser && (
+                          <td>
+                            <FaEdit
+                              className="text-warning mx-2"
+                              onClick={() => handleEditClick(item)}
+                              style={{ cursor: "pointer" }}
+                            />
+                            <FaTrash
+                              className="text-danger mx-2"
+                              onClick={() => handleDeleteClick(item._id)}
+                              style={{ cursor: "pointer" }}
+                            />
+                          </td>
+                        )}
                       </tr>
                     ))}
                   </tbody>
@@ -552,7 +573,6 @@ const CustomerCartPage = () => {
                 }
               />
             </div>
-
 
             <div className="form-group mt-3">
               <label htmlFor="jarsTaken">Jars Taken</label>

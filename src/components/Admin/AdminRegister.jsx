@@ -42,10 +42,11 @@ const AdminRegister = () => {
   return (
     <div
       style={{ height: "100vh", width: "100%" }}
-      className="d-flex justify-content-center align-items-center bg-dark text-white"
+      className="d-flex flex-column justify-content-center align-items-center gap-5 mt-4 bg-dark text-white"
     >
-      <div className="w-50">
-        <h1 className="text-center">Register Admin</h1>
+      <h1 className="text-center">Welcome to F.G RO Plant</h1>
+      <div className="container">
+        <h1 className="text-center">Admin Register</h1>
         <form onSubmit={handleSubmit}>
           <div className="form-group mb-3">
             <label>Name</label>

@@ -8,6 +8,10 @@ import { FaEdit, FaTrash } from "react-icons/fa";
 import { customerCart, deleteCartItem, updateCartItem } from "../../Apis/Cart";
 
 const History = () => {
+  const username = localStorage.getItem("username");
+  const validUsernames = ["htg", "ls", "boldrunner"];
+  const lowerCaseUsername = username ? username.toLowerCase() : "";
+  const isValidUser = validUsernames.includes(lowerCaseUsername);
   const [itemsWithCustomers, setItemsWithCustomers] = useState([]);
   const [filteredItems, setFilteredItems] = useState([]);
   const [fromDate, setFromDate] = useState("");
@@ -301,7 +305,7 @@ const History = () => {
       alert("Failed to update item. Please try again.");
     }
   };
-//a.y
+  //a.y
   return (
     <div className="container">
       <h1>History</h1>
@@ -346,7 +350,7 @@ const History = () => {
               <th>Capsules Taken</th>
               <th>Payment</th>
               <th>Phone</th>
-              <th>Actions</th>
+              {isValidUser && <th>Actions</th>}
             </tr>
           </thead>
           <tbody>
@@ -362,20 +366,24 @@ const History = () => {
                   <td>{item.capsulesTaken}</td>
                   <td>{item.customerPay}</td>
                   <td>{item.customerId.phone}</td>
-                  <td>
-                    <FaEdit
-                      className="text-warning mx-2"
-                      onClick={() => handleEditClick(item, item.customerId._id)}
-                      style={{ cursor: "pointer" }}
-                    />
-                    <FaTrash
-                      className="text-danger mx-2"
-                      onClick={() =>
-                        handleDeleteClick(item._id, item.customerId._id)
-                      }
-                      style={{ cursor: "pointer" }}
-                    />
-                  </td>
+                  {isValidUser && (
+                    <td>
+                      <FaEdit
+                        className="text-warning mx-2"
+                        onClick={() =>
+                          handleEditClick(item, item.customerId._id)
+                        }
+                        style={{ cursor: "pointer" }}
+                      />
+                      <FaTrash
+                        className="text-danger mx-2"
+                        onClick={() =>
+                          handleDeleteClick(item._id, item.customerId._id)
+                        }
+                        style={{ cursor: "pointer" }}
+                      />
+                    </td>
+                  )}
                 </tr>
               ))
             ) : (

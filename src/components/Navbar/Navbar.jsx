@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 const Navbar = () => {
+  const username = localStorage.getItem("username");
   return (
     <nav className="navbar navbar-expand-sm navbar-dark bg-dark">
       <div className="container-fluid">
@@ -14,7 +15,7 @@ const Navbar = () => {
             style={{ width: "50px", borderRadius: "50%" }}
           />
         </Link>
-
+        <h6 className="text-light">{`F.G ${username.toUpperCase()}`}</h6>
         {/* Navbar toggle for mobile view */}
         <button
           className="navbar-toggler"
@@ -47,7 +48,11 @@ const Navbar = () => {
               </Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link" to="/logout">
+              <Link className="nav-link" onClick={() => { 
+                localStorage.removeItem("token");
+                localStorage.removeItem("username");
+                window.location.href = '/';
+               }}>
                 Logout
               </Link>
             </li>
