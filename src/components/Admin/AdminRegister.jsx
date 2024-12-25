@@ -102,11 +102,23 @@ const AdminRegister = () => {
               className="btn btn-primary btn-block w-100"
               disabled={isLoading}
             >
-              {isLoading ? <Spinner animation="border" size="sm" /> : "Register"}
+              {isLoading ? (
+                <Spinner animation="border" size="sm" />
+              ) : (
+                "Register"
+              )}
             </button>
           </div>
         </form>
         {message && <p className="text-center mt-3 text-danger">{message}</p>}
+        <div className="text-center mt-3">
+          <p className="text-white">
+            You have an account?{" "}
+            <Link to="/admin-login" className="text-primary">
+              Login
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   );
